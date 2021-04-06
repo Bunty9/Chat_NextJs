@@ -1,0 +1,42 @@
+Next.js import
+Setting up Styled Components
+Creating the Chat.js File
+Building the Sidebar Component
+Setting up Firebase
+Setting up Firestore Database
+Building the Login Screen
+Building the Loading Component
+Capturing and Storing User's Details
+Building the Chat Component
+Building the getRecipientEmail Function
+Building the [id] Component
+Building the Chat Screen Component
+Building the Message Component
+Final Build 
+Deploying the App using Vercel
+Hosting
+
+
+
+Messaging apps (a.k.a. social messaging or chat applications) are apps and platforms that enable instant messaging. 
+Many such apps have developed into broad platforms enabling status updates, chatbots, payments and conversational commerce (e-commerce via chat).
+My aim is to build a chat application using the Next js web framework.
+Next.js is an open-source React front-end development web framework that enables functionality such as server-side rendering 
+and generating static websites for React based web applications.
+The frontend would be pretty basic with  a sidebar to view all the chats and a messaging window.
+You can navigate through your chats and the page will be immediately available because it's being rendered
+on the server and then it gets delivered to the client .
+The messaging window will also have a auto scroll function as well as the last active status.
+The signup with google functionality will be available.
+The application will be deployed using Vercel.
+
+
+
+
+you can go ahead on the sidebar
+and you can pretty much navigate through
+your chats and here you can see when we
+load a chat immediately the chat is
+available because it's being rendered
+on the server and then it gets delivered
+to the client right so i'll explain all
