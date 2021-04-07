@@ -20,7 +20,7 @@ const signIn = ()=>{
 
         <LoginContainer>
             <Title>Login</Title>
-            <Logo src="https://assets.stickpng.com/thumbs/580b585b2edbce24c47b23ed.png" />
+            <Logo src="https://previews.123rf.com/images/kppwc/kppwc1905/kppwc190500151/125231437-chat-message-icon-speech-bubble-icon-vector.jpg" />
             <Button variant="outlined" onClick={signIn}>Sign in  Google</Button>
         </LoginContainer>
         </Container>
