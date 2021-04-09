@@ -13,8 +13,18 @@ import { useRouter } from 'next/router';
 function Sidebar() {
     const router = useRouter();
     const [user] = useAuthState(auth);
-    const userChatRef = db.collection('chats').where("users" , "array-contains" , user.email);
-    const [chatsSnapshot] = useCollection(userChatRef);
+    const [chatsSnapshot] = useCollection( 
+        db
+            .collection('chats')
+            .where("users" , "array-contains" , user.email)
+    );
+    console.log([chatsSnapshot]);
+    const chatAlreadyExists = (recipientEmail) => 
+        !!chatsSnapshot?.docs.find(
+            (chat) => 
+                chat.data().users.find((user) => user === recipientEmail)?.length > 0
+    );
+
     const createChat = () => {
         const input = prompt("Please enter an email address for the user you want to chat with");
         if (!input) return null;
@@ -27,11 +37,7 @@ function Sidebar() {
     
     };
    
-    const chatAlreadyExists = (recipientEmail) => 
-        !!chatsSnapshot?.docs.find(
-            (chat) => 
-                chat.data().users.find((user) => user === recipientEmail)?.length > 0
-        );
+
    
     return (
         <Container>
@@ -54,7 +60,7 @@ function Sidebar() {
                 Start a new chat
             </SidebarButton>
 
-{/* List of chats */}
+        {/* List of chats */}
         {chatsSnapshot?.docs.map(chat => (
             <Chat key={chat.id} id={chat.id} users={chat.data().users} />
         ))}
@@ -66,7 +72,20 @@ function Sidebar() {
 export default Sidebar
 
 
-const Container = styled.div``;
+const Container = styled.div`
+    flex : 0.45;
+    border-right : 2px solid whitesmoke;
+    height :100vh;
+    min-width: 300px;
+    max-width: 350px;
+    overflow-y: scroll;
+
+    ::-webkit-scrollbar{
+        display :none;
+    }
+    -ms-overflow-style : none;
+    scrollbar-width: none;
+`;
 
 const SidebarButton = styled(Button)`
 width: 100%;

@@ -32,10 +32,10 @@ export async function getServerSideProps(context){
         .orderBy("timestamp","asc")
         .get()
 
-    const messages = messageRes.docs.map(doc => ({
+    const messages = messageRes.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-    })).map(messages=> ({
+    })).map((messages)=> ({
         ...messages,
         timestamp: messages.timestamp.toDate().getTime(),
     }));
