@@ -2,7 +2,7 @@ import styled from "styled-components"
 import {Avatar, IconButton , Button} from "@material-ui/core"
 import getRecipientEmail from "../utils/getRecipientEmail"
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth, db } from "../firebase";
+import { auth, db } from "../firebase/firebase";
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { useRouter } from 'next/router';
 

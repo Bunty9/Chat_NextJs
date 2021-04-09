@@ -3,7 +3,7 @@ import { Avatar, IconButton } from "@material-ui/core";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import styled from "styled-components"
-import { auth, db } from "../firebase";
+import { auth, db } from "../firebase/firebase";
 import AttachFileIcon from '@material-ui/icons/AttachFile';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useCollection } from 'react-firebase-hooks/firestore';
@@ -15,11 +15,21 @@ import SendIcon from '@material-ui/icons/Send';
 import firebase from "firebase";
 import getRecipientEmail from "../utils/getRecipientEmail"
 import TimeAgo from "timeago-react"
+import { useRef } from "react";
 
 function ChatScreen({chat,messages}) {
     const [user] = useAuthState(auth);
     const [input,setInput] = useState("");
     const router = useRouter();
+
+    const endofMessageRef = useRef(null);
+    const scrollToBottom = () => {
+        endofMessageRef.current.scrollIntoView({
+            behavior:"smooth",
+            block: "start"
+        });
+    }
+
     const [messagesSnapshot]= useCollection(
         db
             .collection("chats")
@@ -27,7 +37,6 @@ function ChatScreen({chat,messages}) {
             .collection("messages")
             .orderBy("timestamp","asc")
     );
-    console.log(messagesSnapshot);
     const showMessages = () => {
         if(messagesSnapshot){
             return messagesSnapshot?.docs.map((message) => (
@@ -64,7 +73,9 @@ function ChatScreen({chat,messages}) {
             photoURL: user.photoURL,
         })
         setInput("");
+        scrollToBottom();
     }
+
     const [recipientSnapshot]= useCollection(
         db
             .collection("users")
@@ -72,6 +83,8 @@ function ChatScreen({chat,messages}) {
     )
     const recipient =recipientSnapshot?.docs?.[0]?.data();
     const recipientEmail = getRecipientEmail(chat.users,user);
+
+
 
     return (
         <Container>
@@ -104,7 +117,7 @@ function ChatScreen({chat,messages}) {
             <MessageContainer>
                 {/* show messages */}
                 {showMessages()}
-                <EndofMessage/>
+                <EndofMessage ref= {endofMessageRef}/>
             </MessageContainer>
             <InputContainer>
                 <InsertEmoticonIcon/>
@@ -165,7 +178,9 @@ min-height:90vh;
 
 `;
 
-const EndofMessage = styled.div``;
+const EndofMessage = styled.div`
+margin-bottom : 50px;
+`;
 
 const InputContainer = styled.form`
 display: flex;

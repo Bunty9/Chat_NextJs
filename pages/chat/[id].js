@@ -2,7 +2,7 @@ import styled from "styled-components"
 import ChatScreen from "../../components/ChatScreen"
 import Sidebar from "../../components/Sidebar"
 import Head from "next/head"
-import { auth, db } from "../../firebase"
+import { auth, db } from "../../firebase/firebase"
 import { useAuthState } from "react-firebase-hooks/auth"
 import getRecipientEmail from "../../utils/getRecipientEmail"
 

@@ -4,7 +4,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ChatIcon from '@material-ui/icons/Chat';
 import SearchIcon from '@material-ui/icons/Search';
 import * as EmailValidator from "email-validator";
-import { auth, db } from "../firebase";
+import { auth, db } from "../firebase/firebase";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import Chat from "../components/Chat";
@@ -18,7 +18,6 @@ function Sidebar() {
             .collection('chats')
             .where("users" , "array-contains" , user.email)
     );
-    console.log([chatsSnapshot]);
     const chatAlreadyExists = (recipientEmail) => 
         !!chatsSnapshot?.docs.find(
             (chat) => 
@@ -42,7 +41,7 @@ function Sidebar() {
     return (
         <Container>
             <Header>
-                <UserAvatar src={user.photoURL} onClick={() =>auth.signOut()} />
+                <UserAvatar src={user.photoURL} onClick={() =>{auth.signOut(); router.push(`/`);}} />
                 <IconsContainer>
                     <IconButton>
                         <ChatIcon />
