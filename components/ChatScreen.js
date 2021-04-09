@@ -26,7 +26,7 @@ function ChatScreen({chat,messages}) {
     const scrollToBottom = () => {
         endofMessageRef.current.scrollIntoView({
             behavior:"smooth",
-            block: "start"
+            block: "end", 
         });
     }
 
@@ -39,6 +39,7 @@ function ChatScreen({chat,messages}) {
     );
     const showMessages = () => {
         if(messagesSnapshot){
+            scrollToBottom();
             return messagesSnapshot?.docs.map((message) => (
                 <Message 
                     key={message.id}
@@ -114,7 +115,7 @@ function ChatScreen({chat,messages}) {
                 </HeaderIcons>
             </Header>
 
-            <MessageContainer>
+            <MessageContainer >
                 {/* show messages */}
                 {showMessages()}
                 <EndofMessage ref= {endofMessageRef}/>
@@ -179,7 +180,8 @@ min-height:90vh;
 `;
 
 const EndofMessage = styled.div`
-margin-bottom : 50px;
+min-height:100px;
+margin-bottom : 100px;
 `;
 
 const InputContainer = styled.form`
