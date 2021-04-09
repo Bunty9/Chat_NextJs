@@ -13,6 +13,8 @@ import MicIcon from '@material-ui/icons/Mic';
 import { useState } from "react";
 import SendIcon from '@material-ui/icons/Send';
 import firebase from "firebase";
+import getRecipientEmail from "../utils/getRecipientEmail"
+import TimeAgo from "timeago-react"
 
 function ChatScreen({chat,messages}) {
     const [user] = useAuthState(auth);
@@ -38,15 +40,15 @@ function ChatScreen({chat,messages}) {
                     }}
                 />
             ))
-        }else{
-            return JSON.parse(message).map(message =>(
-                <Message 
-                key={message.id}
-                user={message.user}
-                message={message}
-                />
-            ))
-        }
+        }//else{
+        //     return JSON.parse(message).map(message =>(
+        //         <Message 
+        //         key={message.id}
+        //         user={message.user}
+        //         message={message}
+        //         />
+        //     ))
+        // }
     }
 
     const sendMessage = (e) => {
@@ -63,14 +65,31 @@ function ChatScreen({chat,messages}) {
         })
         setInput("");
     }
+    const [recipientSnapshot]= useCollection(
+        db
+            .collection("users")
+            .where("email","==",getRecipientEmail(chat.users,user))
+    )
+    const recipient =recipientSnapshot?.docs?.[0]?.data();
+    const recipientEmail = getRecipientEmail(chat.users,user);
 
     return (
         <Container>
             <Header>
-                <Avatar/>
+                {recipient ? (
+                    <UserAvatar src={recipient?.photoURL}/>
+                ) :(
+                    <UserAvatar>{recipientEmail[0].toUpperCase()}</UserAvatar>
+                )}
                 <HeaderInformation>
-                    <h3>Rec email</h3>
-                    <p>lastSeen...</p>
+                    <h3>{recipientEmail}</h3>
+                    {recipientSnapshot ? (
+                        <p>Last Active : {'  '}{recipient?.lastSeen?.toDate() ? (
+                            <TimeAgo datetime={recipient?.lastSeen?.toDate()} />
+                        ):"Unavailable"}</p>
+                    ) :(
+                        <p>Last Active :  loading . . .</p>
+                    )}
                 </HeaderInformation>
                 <HeaderIcons>
                     <IconButton>
@@ -116,6 +135,11 @@ display: flex;
 padding:10px;
 align-items: center;
 border-bottom:2px solid whitesmoke;
+`;
+
+const UserAvatar = styled(Avatar)`
+margin: 5px;
+margin-right:10px;
 `;
 
 const HeaderInformation = styled.div`
