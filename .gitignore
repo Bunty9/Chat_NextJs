@@ -35,7 +35,4 @@ yarn-error.log*
 .vercel
 
 next.config.js
-/firebase
-./firebase.js
-/firebase.js
-firebase.js
+
