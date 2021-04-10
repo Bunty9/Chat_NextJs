@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import {Avatar, IconButton , Button} from "@material-ui/core"
+import {Avatar, IconButton , Tooltip} from "@material-ui/core"
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ChatIcon from '@material-ui/icons/Chat';
 import SearchIcon from '@material-ui/icons/Search';
@@ -9,6 +9,11 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import Chat from "../components/Chat";
 import { useRouter } from 'next/router';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import { useState } from "react";
+import { withStyles } from '@material-ui/core/styles';
+import Zoom from '@material-ui/core/Zoom';
 
 function Sidebar() {
     const router = useRouter();
@@ -35,29 +40,58 @@ function Sidebar() {
         }
     
     };
-   
 
+    const logout = () => {auth.signOut(); router.push(`/`);};
+
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+  
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    const LightTooltip = withStyles((theme) => ({
+        tooltip: {
+          backgroundColor: theme.palette.common.white,
+          color: 'rgba(0, 0, 0, 0.87)',
+          boxShadow: theme.shadows[1],
+          fontSize: 11,
+        },
+      }))(Tooltip);
    
     return (
         <Container>
             <Header>
-                <UserAvatar src={user.photoURL} onClick={() =>{auth.signOut(); router.push(`/`);}} />
+                <UserAvatar src={user.photoURL} />
                 <IconsContainer>
+                    <LightTooltip TransitionComponent={Zoom} title="Start a new chat" placement="left" >
+                        <IconButton>
+                            <ChatIcon onClick = {createChat}/>
+                        </IconButton>
+                    </LightTooltip>
                     <IconButton>
-                        <ChatIcon />
+                        <MoreVertIcon onClick={handleClick} />
                     </IconButton>
-                    <IconButton>
-                        <MoreVertIcon />
-                    </IconButton>
+                    <Menu
+                        id="simple-menu"
+                        anchorEl={anchorEl}
+                        keepMounted
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                    >
+                        <MenuItem onClick={handleClose}>Profile</MenuItem>
+                        <MenuItem onClick={handleClose , logout}>Logout</MenuItem>
+                        <MenuItem onClick={handleClose}>Settings</MenuItem>
+                    </Menu>
                 </IconsContainer>
             </Header>
             <Search>
                 <SearchIcon />
                 <SearchInput placeholder = 'Search in chat'/>
             </Search>
-            <SidebarButton onClick = {createChat}>  
-                Start a new chat
-            </SidebarButton>
 
         {/* List of chats */}
         {chatsSnapshot?.docs.map(chat => (
@@ -86,13 +120,6 @@ const Container = styled.div`
     scrollbar-width: none;
 `;
 
-const SidebarButton = styled(Button)`
-width: 100%;
-&&&{
-    border-top: 2px solid whitesmoke;
-    border-bottom: 2px solid whitesmoke;
-}
-`;
 
 
 const Header = styled.div`

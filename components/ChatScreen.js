@@ -1,5 +1,5 @@
 
-import { Avatar, IconButton } from "@material-ui/core";
+import { Avatar, IconButton, Tooltip } from "@material-ui/core";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import styled from "styled-components"
@@ -16,6 +16,10 @@ import firebase from "firebase";
 import getRecipientEmail from "../utils/getRecipientEmail"
 import TimeAgo from "timeago-react"
 import { useRef } from "react";
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import { withStyles } from '@material-ui/core/styles';
+import Zoom from '@material-ui/core/Zoom';
 
 function ChatScreen({chat,messages}) {
     const [user] = useAuthState(auth);
@@ -85,7 +89,23 @@ function ChatScreen({chat,messages}) {
     const recipient =recipientSnapshot?.docs?.[0]?.data();
     const recipientEmail = getRecipientEmail(chat.users,user);
 
+    const [anchorEl, setAnchorEl] = useState(null);
 
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+  
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+    const LightTooltip = withStyles((theme) => ({
+        tooltip: {
+          backgroundColor: theme.palette.common.white,
+          color: 'rgba(0, 0, 0, 0.87)',
+          boxShadow: theme.shadows[1],
+          fontSize: 11,
+        },
+      }))(Tooltip);
 
     return (
         <Container>
@@ -106,12 +126,25 @@ function ChatScreen({chat,messages}) {
                     )}
                 </HeaderInformation>
                 <HeaderIcons>
+                    <LightTooltip TransitionComponent={Zoom} title="Attach Files" placement="left" >
+                        <IconButton>
+                            <AttachFileIcon />
+                        </IconButton>
+                    </LightTooltip>
                     <IconButton>
-                        <AttachFileIcon />
+                        <MoreVertIcon onClick={handleClick} />
                     </IconButton>
-                    <IconButton>
-                        <MoreVertIcon />
-                    </IconButton>
+                    <Menu
+                        id="simple-menu"
+                        anchorEl={anchorEl}
+                        keepMounted
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                    >
+                        <MenuItem onClick={handleClose}>User Info</MenuItem>
+                        <MenuItem onClick={handleClose}>Select Message</MenuItem>
+                        <MenuItem onClick={handleClose}>Delete Chat</MenuItem>
+                    </Menu>
                 </HeaderIcons>
             </Header>
 
@@ -121,7 +154,9 @@ function ChatScreen({chat,messages}) {
                 <EndofMessage ref= {endofMessageRef}/>
             </MessageContainer>
             <InputContainer>
-                <InsertEmoticonIcon/>
+                <LightTooltip TransitionComponent={Zoom} title="Insert Emoji" placement="top" >
+                    <InsertEmoticonIcon/>
+                </LightTooltip>
                 <Input value={input}  onChange={e => setInput(e.target.value)} />
                 <IconButton disabled={!input} type="submit" onClick={sendMessage} >
                     <SendIcon />
