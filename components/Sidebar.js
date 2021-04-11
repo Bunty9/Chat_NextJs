@@ -61,7 +61,8 @@ function Sidebar() {
           fontSize: 11,
         },
       }))(Tooltip);
-   
+    
+    const [searchTerm , setSearchTerm] = useState('');
     return (
         <Container>
             <Header>
@@ -90,19 +91,25 @@ function Sidebar() {
             </Header>
             <Search>
                 <SearchIcon />
-                <SearchInput placeholder = 'Search in chat'/>
+                <SearchInput placeholder = 'Search in chat' onChange={event =>{setSearchTerm(event.target.value)}} />
             </Search>
-
-        {/* List of chats */}
-        {chatsSnapshot?.docs.map(chat => (
-            <Chat key={chat.id} id={chat.id} users={chat.data().users} />
-        ))}
+            {chatsSnapshot?.docs.filter((chat) => {
+                if (searchTerm == ""){
+                    return chat;
+                }else if(chat.data().users[0].includes(searchTerm) || chat.data().users[1].includes(searchTerm)){
+                    return chat;
+                }
+            })
+            .map(chat => (
+                <Chat key={chat.id} id={chat.id} users={chat.data().users} />
+            ))}
 
         </Container>
     )
 }
 
 export default Sidebar
+
 
 
 const Container = styled.div`
