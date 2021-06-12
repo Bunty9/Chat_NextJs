@@ -25,8 +25,13 @@ function Chat({id,users}) {
         ) :(
             <UserAvatar>{recipientEmail[0].toUpperCase()}</UserAvatar>
         )}
-        
+        {recipient?.displayName ? (
+            <p>{recipient?.displayName}</p>
+        ):(
             <p>{recipientEmail}</p>
+        )
+        }
+        
         </Container>
     )
 }

@@ -5,14 +5,29 @@ import Head from "next/head"
 import { auth, db } from "../../firebase/firebase"
 import { useAuthState } from "react-firebase-hooks/auth"
 import getRecipientEmail from "../../utils/getRecipientEmail"
+import { useCollection } from "react-firebase-hooks/firestore"
 
 function Chat({chat,messages}) {
     const [user] = useAuthState(auth);
 
+    const [recipientSnapshot]= useCollection(
+        db
+            .collection("users")
+            .where("email","==",getRecipientEmail(chat.users,user))
+    )
+    const recipient =recipientSnapshot?.docs?.[0]?.data();
+    const recipientEmail = getRecipientEmail(chat.users,user);
+
     return (
         <Container>
             <Head>
-                <title>Chat with {getRecipientEmail(chat.users,user)}</title>
+                <title>Chat with {'  '}
+                    {recipient?.displayName ? (
+                        recipient?.displayName  
+                    ):(
+                        recipientEmail 
+                    )
+                    }</title>
             </Head>
             <Sidebar/>
             <ChatContainer>

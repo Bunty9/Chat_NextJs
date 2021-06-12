@@ -20,19 +20,21 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { withStyles } from '@material-ui/core/styles';
 import Zoom from '@material-ui/core/Zoom';
+import ScrollTo from "react-scroll-into-view";
+
 
 function ChatScreen({chat,messages}) {
     const [user] = useAuthState(auth);
     const [input,setInput] = useState("");
     const router = useRouter();
 
-    const endofMessageRef = useRef(null);
-    const scrollToBottom = () => {
-        endofMessageRef.current.scrollIntoView({
-            behavior:"smooth",
-            block: "end", 
-        });
-    }
+    // const endofMessageRef = useRef(null);
+    // const scrollToBottom = () => {
+    //     endofMessageRef.current.scrollIntoView({
+    //         behavior:"smooth",
+    //         block: "end", 
+    //     });
+    // }
 
     const [messagesSnapshot]= useCollection(
         db
@@ -43,7 +45,6 @@ function ChatScreen({chat,messages}) {
     );
     const showMessages = () => {
         if(messagesSnapshot){
-            scrollToBottom();
             return messagesSnapshot?.docs.map((message) => (
                 <Message 
                     key={message.id}
@@ -78,7 +79,6 @@ function ChatScreen({chat,messages}) {
             photoURL: user.photoURL,
         })
         setInput("");
-        scrollToBottom();
     }
 
     const [recipientSnapshot]= useCollection(
@@ -98,6 +98,7 @@ function ChatScreen({chat,messages}) {
     const handleClose = () => {
       setAnchorEl(null);
     };
+
     const LightTooltip = withStyles((theme) => ({
         tooltip: {
           backgroundColor: theme.palette.common.white,
@@ -105,7 +106,20 @@ function ChatScreen({chat,messages}) {
           boxShadow: theme.shadows[1],
           fontSize: 11,
         },
-      }))(Tooltip);
+    }))(Tooltip);
+
+    //image upload
+    const[image,setImage] =useState(null);
+
+    const handleChange = (event) =>{
+        if (event.target.files[0]){
+
+        }
+    };
+
+    const handleUpload = (event) =>{
+
+    }
 
     return (
         <Container>
@@ -116,7 +130,12 @@ function ChatScreen({chat,messages}) {
                     <UserAvatar>{recipientEmail[0].toUpperCase()}</UserAvatar>
                 )}
                 <HeaderInformation>
-                    <h3>{recipientEmail}</h3>
+                    {recipient?.displayName ? (
+                        <h3>{recipient?.displayName}</h3>
+                    ):(
+                        <h3>{recipientEmail}</h3>
+                    )
+                    }
                     {recipientSnapshot ? (
                         <p>Last Active : {'  '}{recipient?.lastSeen?.toDate() ? (
                             <TimeAgo datetime={recipient?.lastSeen?.toDate()} />
@@ -126,8 +145,9 @@ function ChatScreen({chat,messages}) {
                     )}
                 </HeaderInformation>
                 <HeaderIcons>
+                    <UploadFile type="file" id="upload-button" style={{ display: "none" }} onChange={handleChange} />
                     <LightTooltip TransitionComponent={Zoom} title="Attach Files" placement="left" >
-                        <IconButton>
+                        <IconButton onClick={handleUpload}  >
                             <AttachFileIcon />
                         </IconButton>
                     </LightTooltip>
@@ -151,17 +171,19 @@ function ChatScreen({chat,messages}) {
             <MessageContainer >
                 {/* show messages */}
                 {showMessages()}
-                <EndofMessage ref= {endofMessageRef}/>
+                <ScrollTo selector={"endOfMessage"} >
+                </ScrollTo>
+                <EndofMessage className="endOfMessage" />
             </MessageContainer>
             <InputContainer>
                 <LightTooltip TransitionComponent={Zoom} title="Insert Emoji" placement="top" >
-                    <InsertEmoticonIcon/>
+                    <InsertEmoticonIcon  />
                 </LightTooltip>
                 <Input value={input}  onChange={e => setInput(e.target.value)} />
                 <IconButton disabled={!input} type="submit" onClick={sendMessage} >
                     <SendIcon />
                 </IconButton>
-                
+
                 <MicIcon/>
             </InputContainer>
         </Container>
@@ -243,4 +265,8 @@ border-radius:5px;
 outline: none;
 margin-left: 10px;
 margin-right: 10px;
+`;
+
+const UploadFile = styled.input`
+max-width:300px;
 `;
